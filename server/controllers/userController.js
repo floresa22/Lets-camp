@@ -130,10 +130,6 @@ userController.getFav = (req, res, next) => {
   }) 
 }
 
-// userController.deleteFav = (req, res, next) => {
-
-// }
-
 
 
 

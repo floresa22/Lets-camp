@@ -89,6 +89,8 @@ userController.addCampground = (req, res, next) => {
   })
 }
 
+
+
 userController.addFav = (req, res, next) => {
   const user = JSON.stringify(req.body.username);
   const campground = JSON.stringify(req.body.campground);

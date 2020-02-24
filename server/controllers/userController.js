@@ -74,8 +74,49 @@ userController.createUser = (req, res, next) => {
 }
 
 userController.addCampground = (req, res, next) => {
+  // console.log(req.body, 'this is req body inside addCampground')
+  // console.log(req.body.campground, 'this is campground inside addCampground')
+  const { name, pets, sewer, water_hookup, waterfront, latitude, longitude } = req.body.campground; 
+  // console.log(name, 'this is name')
+  
+  const text = `INSERT INTO "Campground" (name, pets, sewer, water_hookup, longitude, latitude, waterfront) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+  const values = [name, pets, sewer, water_hookup, longitude, latitude, waterfront]; 
+
+  db.query(text, values)
+  .then((response) => {
+     // res.locals.campId = response.
+    return next();
+  })
+  .catch(err => {
+    console.log('Error: ', err);
+    return next(err);
+  })
+
+  const textTwo = `SELECT * FROM "Campground" WHERE name = $1`
+  const valuesTwo = [name]
+
+  db.query(textTwo, valuesTwo, (err, data) => {
+    if(err){
+      console.log(err, 'this is error')
+      return next(err);
+    } else if(data){
+      console.log(data, 'this is data')
+      return next();
+    }
+  })
+  
 
 }
+
+// .then((response) => {
+//   console.log(response, 'this is response from database after query is sent');
+//   // res.locals.campid = response
+//   return next();
+// })
+// .catch(err => {
+//   console.log('Error: ', err);
+//   return next(err); 
+// })
 
 userController.addFav = (req, res, next) => {
   const user = JSON.stringify(req.body.username);
@@ -96,14 +137,14 @@ userController.addFav = (req, res, next) => {
 
 
 userController.getFav = (req, res, next) => {
-  const user = JSON.stringify(req.body.username);
+  const userId = JSON.stringify(req.body.username);
 
   const text = `SELECT * FROM campground WHERE campground_id in
   (
   select campground_id from favorites where user_id = $1
   )`;
 
-  const value = [user];
+  const value = [userId];
 
   db.query(text,value)
   .then((response) => {

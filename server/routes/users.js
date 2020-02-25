@@ -15,7 +15,7 @@ router.get('/favorite', userController.getFav, (req, res) => {
     res.status(200).json()
 });
 
-router.post('/favorite', userController.addCampground, (req, res) => {
+router.post('/favorite', userController.addCampground, userController.getCampground, userController.addFav, (req, res) => {
     res.status(200).json()
 });
 

@@ -89,14 +89,37 @@ userController.addCampground = (req, res, next) => {
   })
 }
 
+userController.getCampground = async (req, res, next) => {
+  const { name } = req.body.campground; 
+
+  const text = `SELECT * FROM "Campground" WHERE name = $1`;
+  const value = [name];
+
+  await db.query(text, value, (err, data) => {
+    if(err){
+      console.log(err, 'this is error');
+      return next(err);
+    } else if(!data){
+      console.log('data is incorrect');
+      return next(err)
+    } else {
+      console.log(data.rows[0].Campground_id, 'this is the campgrounds id that was just created')
+      res.locals.campId = data.rows[0].Campground_id;
+      return next();
+    }
+  })
+}
+
 
 
 userController.addFav = (req, res, next) => {
-  const user = JSON.stringify(req.body.username);
-  const campground = JSON.stringify(req.body.campground);
+  const userId = req.body.userId;
+  const campgroundId = res.locals.campId;
+  // console.log(userId, 'this is secondUser inside of add fav')
+  console.log(campgroundId, 'this is campground id inside addFav middleware')
 
   const text = `INSERT INTO "Favorites" (Campground_id, user_id) VALUES ($1,$2)`;
-  const values = [campground, user];
+  const values = [campgroundId, user];
 
   db.query(text,values)
   .then((response) => {
